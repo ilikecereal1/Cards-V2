@@ -18,15 +18,23 @@ function simpleCard(
   };
 }
 
-class AdvancedCard {
+class Card {
   constructor(cardId, header, sections, sectionDividerStyle) {
     this.cardId = cardId;
     this.header = header;
     this.sections = sections;
     this.sectionDividerStyle = sectionDividerStyle;
-    Object.keys(this).forEach(
-      (key) => this[key] === undefined && delete this[key]
-    );
+  }
+  toJSON() {
+    const removeEmpty = (obj) => {
+      let newObj = {};
+      Object.keys(obj).forEach((key) => {
+        if (obj[key] === Object(obj[key])) newObj[key] = removeEmpty(obj[key]);
+        else if (obj[key] !== undefined) newObj[key] = obj[key];
+      });
+      return newObj;
+    };
+    return removeEmpty(this);
   }
 }
 
@@ -37,9 +45,6 @@ class CardHeader {
     this.imageType = imageType;
     this.imageUrl = imageUrl;
     this.imageAltText = imageAltText;
-    Object.keys(this).forEach(
-      (key) => this[key] === undefined && delete this[key]
-    );
   }
 }
 
@@ -49,9 +54,6 @@ class Section {
     this.widgets = widgets;
     this.collapsible = collapsible;
     this.uncollapsibleWidgetsCount = uncollapsibleWidgetsCount;
-    Object.keys(this).forEach(
-      (key) => this[key] === undefined && delete this[key]
-    );
   }
 }
 
@@ -80,9 +82,6 @@ class Widget {
     this.divider = divider;
     this.grid = grid;
     this.columns = columns;
-    Object.keys(this).forEach(
-      (key) => this[key] === undefined && delete this[key]
-    );
   }
 }
 
@@ -97,9 +96,6 @@ class Image {
     this.url = url;
     this.onClick = onClick;
     this.altText = altText;
-    Object.keys(this).forEach(
-      (key) => this[key] === undefined && delete this[key]
-    );
   }
 }
 
@@ -109,9 +105,6 @@ class OnClick {
     this.openLink = openLink;
     this.openDynamicLinkAction = openDynamicLinkAction;
     this.card = card;
-    Object.keys(this).forEach(
-      (key) => this[key] === undefined && delete this[key]
-    );
   }
 }
 
@@ -128,9 +121,6 @@ class Action {
     this.loadIndicator = loadIndicator;
     this.persistValues = persistValues;
     this.interaction = interaction;
-    Object.keys(this).forEach(
-      (key) => this[key] === undefined && delete this[key]
-    );
   }
 }
 
@@ -155,7 +145,7 @@ class DecoratedText {
     wrapText,
     bottomLabel,
     onClick,
-    button, 
+    button,
     switchControl,
     endIcon
   ) {
@@ -168,9 +158,6 @@ class DecoratedText {
     this.button = button;
     this.switchControl = switchControl;
     this.endIcon = endIcon;
-    Object.keys(this).forEach(
-      (key) => this[key] === undefined && delete this[key]
-    );
   }
 }
 
@@ -180,9 +167,6 @@ class Icon {
     this.imageType = imageType;
     this.knownIcon = knownIcon;
     this.iconUrl = iconUrl;
-    Object.keys(this).forEach(
-      (key) => this[key] === undefined && delete this[key]
-    );
   }
 }
 
@@ -194,9 +178,6 @@ class Button {
     this.onClick = onClick;
     this.disabled = disabled;
     this.altText = altText;
-    Object.keys(this).forEach(
-      (key) => this[key] === undefined && delete this[key]
-    );
   }
 }
 
@@ -244,9 +225,6 @@ class TextInput {
     this.onChangeAction = onChangeAction;
     this.initialSuggestions = initialSuggestions;
     this.autoCompleteAction = autoCompleteAction;
-    Object.keys(this).forEach(
-      (key) => this[key] === undefined && delete this[key]
-    );
   }
 }
 
@@ -284,9 +262,6 @@ class SelectionInput {
     this.multiSelectMinQueryLength = multiSelectMinQueryLength;
     this.externalDataSource = externalDataSource;
     this.platformDataSource = platformDataSource;
-    Object.keys(this).forEach(
-      (key) => this[key] === undefined && delete this[key]
-    );
   }
 }
 
@@ -297,9 +272,6 @@ class SelectionItem {
     this.selected = selected;
     this.startIconUri = startIconUri;
     this.bottomText = bottomText;
-    Object.keys(this).forEach(
-      (key) => this[key] === undefined && delete this[key]
-    );
   }
 }
 
@@ -317,10 +289,7 @@ class DateTimePicker {
     this.type = type;
     this.valueMsEpoch = valueMsEpoch;
     this.timezoneOffsetDate = timezoneOffsetDate;
-    Object.assign(this, onChangeAction);
-    Object.keys(this).forEach(
-      (key) => this[key] === undefined && delete this[key]
-    );
+    this.onChangeAction = onChangeAction;
   }
 }
 
@@ -333,5 +302,88 @@ class Grid {
     this.title = title;
     this.items = items;
     this.borderStyle = borderStyle;
+    this.columnCount = columnCount;
+    this.onClick = onClick;
+  }
+}
+
+class GridItem {
+  constructor(id, image, title, subtitle, layout) {
+    this.id = id;
+    this.image = image;
+    this.title = title;
+    this.subtitle = subtitle;
+    this.layout = layout;
+  }
+}
+
+class ImageComponent {
+  constructor(imageUri, altText, cropStyle, borderStyle) {
+    this.imageUri = imageUri;
+    this.altText = altText;
+    this.cropStyle = cropStyle;
+    this.borderStyle = borderStyle;
+  }
+}
+
+class ImageCropStyle {
+  constructor(type, aspectRatio) {
+    this.type = type;
+    this.aspectRatio = aspectRatio;
+  }
+}
+
+class BorderStyle {
+  constructor(type, strokeColor, cornerRadius) {
+    this.type = type;
+    this.strokeColor = strokeColor;
+    this.cornerRadius = cornerRadius;
+  }
+}
+
+class Columns {
+  constructor(columnItems) {
+    this.columnItems = columnItems;
+  }
+}
+
+class Column {
+  constructor(
+    horizontalSizeStyle,
+    horizontalAlignment,
+    verticalAlignment,
+    widgets
+  ) {
+    this.horizontalSizeStyle = horizontalSizeStyle;
+    this.horizontalAlignment = horizontalAlignment;
+    this.verticalAlignment = verticalAlignment;
+    this.widgets = widgets;
+  }
+}
+
+class Widgets {
+  constructor(
+    textParagraph,
+    image,
+    decoratedText,
+    buttonList,
+    textInput,
+    selectionInput,
+    dateTimePicker
+  ) {
+    this.textParagraph = textParagraph;
+    this.image = image;
+    this.decoratedText = decoratedText;
+    this.buttonList = buttonList;
+    this.textInput = textInput;
+    this.selectionInput = selectionInput;
+    this.dateTimePicker = dateTimePicker;
+  }
+}
+
+class CardFixedFooter {
+  constructor(primaryButton, secondaryButton) {
+    this.primaryButton = primaryButton;
+    this.secondaryButton = secondaryButton;
   }
 }
